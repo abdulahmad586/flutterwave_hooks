@@ -16,5 +16,10 @@
   "bugs": {
     "url": "https://github.com/abdulahmad586/flutterwave_hooks/issues"
   },
-  "homepage": "https://github.com/abdulahmad586/flutterwave_hooks#readme"
+  "homepage": "https://github.com/abdulahmad586/flutterwave_hooks#readme",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^16.3.0",
+    "express": "^4.18.2"
+  }
 }
