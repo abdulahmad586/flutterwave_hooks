@@ -57,9 +57,9 @@ class AppServer extends EventEmitter {
             // }
 
             sock.on("disconnect", (reason) => {
-                if (sock.user.userType != "App") {
-                    this.#clientsNum--;
-                }
+                // if (sock.user.userType != "App") {
+                //     this.#clientsNum--;
+                // }
             });
 
             this.emit('connection', sock);
