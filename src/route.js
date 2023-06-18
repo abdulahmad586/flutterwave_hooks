@@ -1,5 +1,6 @@
 const { Router } = require("express");
-const { secretHash } = require('./config')
+const { secretHash } = require('./config');
+const { processEvent } = require("./service");
 
 module.exports = () => {
     const api = new Router();
@@ -13,6 +14,9 @@ module.exports = () => {
         const payload = req.body;
         // It's a good idea to log all received events.
         console.log(payload);
+        setTimeout(() => {
+            processEvent(payload);
+        }, 0)
         // Do something (that doesn't take too long) with the payload
         res.status(200).end()
     });

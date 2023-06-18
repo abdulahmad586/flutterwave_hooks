@@ -1,24 +1,3 @@
-const express = require('express');
-const cors = require('cors');
 require('./config');
 
-const router = require('./route');
-
-const port = 3000;
-
-const app = express();
-
-app.use(cors());
-app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
-
-app.get('/', (req, res) => {
-    res.status(200).json({ message: 'Zuma Wallet Webhook Server' });
-})
-
-app.use(router())
-
-app.listen(port, () => {
-    console.log(`Webhook Server running on port ${port}`);
-});
-
+const app = require('./server');
