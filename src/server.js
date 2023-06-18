@@ -36,30 +36,27 @@ class AppServer extends EventEmitter {
         });
 
         this.#io.on('connection', (sock) => {
-            // const token = sock.handshake.auth['x-access-token'];
+            const token = sock.handshake.auth['x-access-token'];
 
-            // if (!token) sock.disconnect();
-            // try {
-            //     const decoded = jwt.verify(token, jwtKey);
-            //     sock.user = decoded;
-            //     sock.token = token;
-            //     if (!sockerUsers.includes(sock.user.userType)) {
-            //         console.log("Disconnected client because their userType is not accepted", sock.user.userType);
-            //         return sock.disconnect()
-            //     };
-            // } catch (err) {
-            //     console.log("Disconnected client because there was an error", err);
-            //     return sock.disconnect();
-            // }
+            if (!token) sock.disconnect();
+            try {
+                const decoded = jwt.verify(token, jwtKey);
+                sock.user = decoded;
+                sock.token = token;
+                if (!sockerUsers.includes(sock.user?.userType)) {
+                    console.log("Disconnected client because their userType is not accepted", sock.user.userType);
+                    return sock.disconnect()
+                };
+            } catch (err) {
+                console.log("Disconnected client because there was an error", err);
+                return sock.disconnect();
+            }
 
-            // if (sock.user.userType != "App") {
-            //     this.#clientsNum++;
-            // }
+            this.#clientsNum++;
+
 
             sock.on("disconnect", (reason) => {
-                // if (sock.user.userType != "App") {
-                //     this.#clientsNum--;
-                // }
+                this.#clientsNum--;
             });
 
             this.emit('connection', sock);
