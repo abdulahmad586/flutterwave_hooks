@@ -1,7 +1,4 @@
 const successStatuses = ["successful"]
-
-const appServer = require("./server");
-
 const processEvent = (data) => {
     try {
 
@@ -14,9 +11,9 @@ const processEvent = (data) => {
         const payload = { eventType, status, transactionId, refId };
         const success = successStatuses.includes(status);
         if (success) {
-            appServer.sendMessage("transaction.update.success", payload)
+            require('./server').sendMessage("transaction.update.success", payload)
         } else {
-            appServer.sendMessage("transaction.update.failure", payload)
+            require('./server').sendMessage("transaction.update.failure", payload)
         }
 
     } catch (e) {
