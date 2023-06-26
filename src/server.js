@@ -39,7 +39,6 @@ class AppServer extends EventEmitter {
             const token = sock.handshake.auth['x-access-token'];
 
             if (!token) sock.disconnect();
-            console.log("Gotten token from client", token);
             try {
                 const decoded = jwt.verify(token, jwtKey);
                 sock.user = decoded;
