@@ -30,7 +30,7 @@ module.exports = () => {
         })
     );
 
-    app.post("/paystack-hook", (req, res) => {
+    api.post("/paystack-hook", (req, res) => {
         const paystackSignature = req.headers["x-paystack-signature"];
         if (!paystackSignature) {
             return res.status(401).send("Signature missing");
