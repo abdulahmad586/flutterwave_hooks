@@ -1,6 +1,6 @@
 const { Router } = require("express");
 const express = require('express');
-const { secretHash } = require('./config');
+const { secretHash, paystackSecretKey } = require('./config');
 const { processEvent, processPaystackEvent } = require("./service");
 const crypto = require('crypto');
 
@@ -27,21 +27,31 @@ module.exports = () => {
         "/paystack-hook",
         express.json({
             verify: (req, res, buf) => {
+                console.log("Converting req to raw body", buf.toString());
+                
                 req.rawBody = buf.toString(); // only for this route
             },
         }),
         (req, res) => {
+            
             const paystackSignature = req.headers["x-paystack-signature"];
+            console.log("New payment from paystack", paystackSignature);
+            
             if (!paystackSignature) {
                 return res.status(401).send("Signature missing");
             }
 
             const hash = crypto
-                .createHmac("sha512", process.env.PAYSTACK_SECRET_KEY)
+                .createHmac("sha512", paystackSecretKey)
                 .update(req.rawBody) // guaranteed to exist now
                 .digest("hex");
+            
+            console.log("Created hash and updated req");
+            
 
             if (hash !== paystackSignature) {
+                console.log("Invalid signature");
+                
                 return res.status(401).send("Invalid signature");
             }
 
