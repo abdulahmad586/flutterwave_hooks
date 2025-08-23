@@ -23,42 +23,35 @@ module.exports = () => {
         res.status(200).end()
     });
 
-    api.use(
+    api.post(
+        "/paystack-hook",
         express.json({
             verify: (req, res, buf) => {
-                req.rawBody = buf.toString(); // keep raw body for signature verification
+                req.rawBody = buf.toString(); // only for this route
             },
-        })
+        }),
+        (req, res) => {
+            const paystackSignature = req.headers["x-paystack-signature"];
+            if (!paystackSignature) {
+                return res.status(401).send("Signature missing");
+            }
+
+            const hash = crypto
+                .createHmac("sha512", process.env.PAYSTACK_SECRET_KEY)
+                .update(req.rawBody) // guaranteed to exist now
+                .digest("hex");
+
+            if (hash !== paystackSignature) {
+                return res.status(401).send("Invalid signature");
+            }
+
+            const event = req.body;
+            console.log("Paystack webhook received:", event);
+            setTimeout(() => processPaystackEvent(event), 0);
+
+            res.sendStatus(200);
+        }
     );
-
-    api.post("/paystack-hook", (req, res) => {
-        const paystackSignature = req.headers["x-paystack-signature"];
-        if (!paystackSignature) {
-            return res.status(401).send("Signature missing");
-        }
-
-        // Re-generate hash using Paystack secret key
-        const hash = crypto
-            .createHmac("sha512", process.env.PAYSTACK_SECRET_KEY)
-            .update(req.rawBody)
-            .digest("hex");
-
-        if (hash !== paystackSignature) {
-            return res.status(401).send("Invalid signature");
-        }
-
-        const event = req.body;
-
-        // Log or process event
-        console.log("Paystack webhook received:", event);
-
-        // async safe handling
-        setTimeout(() => {
-            processPaystackEvent(event); // implement your logic
-        }, 0);
-
-        return res.sendStatus(200);
-    });
 
     return api;
 }
