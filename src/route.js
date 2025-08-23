@@ -2,6 +2,7 @@ const { Router } = require("express");
 const express = require('express');
 const { secretHash } = require('./config');
 const { processEvent, processPaystackEvent } = require("./service");
+const crypto = require('crypto');
 
 module.exports = () => {
     const api = new Router();
