@@ -21,7 +21,13 @@ class AppServer extends EventEmitter {
     #init() {
         const app = express();
         app.use(cors());
-        app.use(express.json());
+        app.use(express.json({
+            verify: (req, res, buf) => {
+                console.log("Converting req to raw body", buf.toString());
+                
+                req.rawBody = buf.toString(); // only for this route
+            },
+        }));
         app.use(express.urlencoded({ extended: false }));
 
         app.use(router());

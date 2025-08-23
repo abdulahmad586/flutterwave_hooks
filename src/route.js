@@ -25,17 +25,9 @@ module.exports = () => {
 
     api.post(
         "/paystack-hook",
-        express.json({
-            verify: (req, res, buf) => {
-                console.log("Converting req to raw body", buf.toString());
-                
-                req.rawBody = buf.toString(); // only for this route
-            },
-        }),
         (req, res) => {
             
             const paystackSignature = req.headers["x-paystack-signature"];
-            console.log("New payment from paystack", paystackSignature);
             
             if (!paystackSignature) {
                 return res.status(401).send("Signature missing");
