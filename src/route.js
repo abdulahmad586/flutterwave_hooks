@@ -37,9 +37,6 @@ module.exports = () => {
                 .createHmac("sha512", paystackSecretKey)
                 .update(req.rawBody) // guaranteed to exist now
                 .digest("hex");
-            
-            console.log("Created hash and updated req");
-            
 
             if (hash !== paystackSignature) {
                 console.log("Invalid signature");
